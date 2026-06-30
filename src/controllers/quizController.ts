@@ -92,9 +92,17 @@ export const submitAnswer = async (req: AuthRequest, res: Response) => {
                 error: "Today's question hasnt been generated"
             })
         }
+const normalizedSubmitted = answer.trim().toLowerCase();
+const normalizedCorrect = question.correctAnswer.trim().toLowerCase();
 
-        const isCorrect = 
-        answer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase()
+const submittedNum = parseFloat(normalizedSubmitted);
+const correctNum = parseFloat(normalizedCorrect);
+
+const isCorrect =
+  !isNaN(submittedNum) && !isNaN(correctNum)
+    ? submittedNum === correctNum
+    : normalizedSubmitted === normalizedCorrect;
+
 
         await prisma.dailyAttempt.create({
             data: {
