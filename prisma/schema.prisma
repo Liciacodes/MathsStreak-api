@@ -1,11 +1,10 @@
 generator client {
-  provider            = "prisma-client-js"
-  
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-    url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -22,6 +21,7 @@ model Question {
   correctAnswer String
   date          DateTime       @unique @db.Date
   createdAt     DateTime       @default(now())
+  options       String[]
   attempts      DailyAttempt[]
 }
 

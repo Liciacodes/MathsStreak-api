@@ -11,6 +11,7 @@ const groq = new Groq({ apiKey });
 interface GeneratedQuestion {
   question: string;
   answer: string;
+  options: string[];
 }
 
 export const generateDailyQuestion = async (): Promise<GeneratedQuestion> => {
@@ -23,9 +24,11 @@ Requirements:
 - Double-check your arithmetic before responding — the answer must be mathematically correct
 - For answers that are whole numbers, give the answer as a whole number (e.g. "125" not "125.00")
 - For answers that are decimals, round to 2 decimal places
+- Generate 3 wrong answers that are plausible but clearly incorrect
+- Wrong answers should be close to the correct answer to make it challenging
 
 Respond ONLY with valid JSON in this exact format, no markdown, no extra text:
-{"question": "the question text", "answer": "the exact correct answer"}`;
+{"question": "the question text", "answer": "the correct answer", "options": ["correct answer", "wrong answer 1", "wrong answer 2", "wrong answer 3"]}`;
 
   const response = await groq.chat.completions.create({
     messages: [{ role: "user", content: prompt }],
@@ -45,8 +48,8 @@ Respond ONLY with valid JSON in this exact format, no markdown, no extra text:
   try {
     const parsed = JSON.parse(cleaned) as GeneratedQuestion;
 
-    if (!parsed.question || !parsed.answer) {
-      throw new Error("Missing question or answer field");
+    if (!parsed.question || !parsed.answer || !parsed.options || parsed.options.length !== 4  ) {
+      throw new Error("Missing question, answer or options field");
     }
 
     return parsed;
