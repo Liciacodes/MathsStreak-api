@@ -11,7 +11,7 @@ const app = express();
 app.use(cors({
   origin: [
      "http://localhost:5173",
-    "https://quiz-streak-client.vercel.app"
+      "https://mathsstreak.vercel.app"
   ],
   credentials: true,
 }));
