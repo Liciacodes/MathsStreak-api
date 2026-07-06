@@ -1,4 +1,4 @@
-# QuizStreak
+# MathsStreak
 
 A daily math quiz app. One AI-generated question a day, answer it, build your streak.
 
