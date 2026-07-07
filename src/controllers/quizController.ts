@@ -148,3 +148,27 @@ const calculateStreak = async (userId: string): Promise<number> => {
 
   return streak;
 };
+
+export const getStreakHistory = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId as string;
+
+    // Fetch all daily attempts for this user, from newest to oldest
+    const history = await prisma.dailyAttempt.findMany({
+      where: { userId },
+      orderBy: { date: "desc" },
+      select: {
+        id: true,
+        date: true,
+        isCorrect: true,
+      },
+    });
+
+    // Return the history array wrapped in an object
+    return res.json({ history });
+  } catch (error) {
+    console.error("Error fetching streak history:", error);
+    res.status(500).json({ error: "Something went wrong fetching history" });
+  }
+};
+
