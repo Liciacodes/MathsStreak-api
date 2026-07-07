@@ -8,6 +8,6 @@ const router = Router()
 
 router.get('/today', requireAuth, getTodayQuiz)
 router.post('/submit', requireAuth, submitAnswer)
-router.get('/streak', requireAuth, getStreakHistory)
+router.get('/history', requireAuth, getStreakHistory)
 
 export default router
