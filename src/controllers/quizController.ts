@@ -206,7 +206,7 @@ export const getLeaderboard = async (req: AuthRequest, res: Response) => {
         return { 
           rank: index + 1,
           email: user?.email || "Anonymous User",
-          correctAnswers: item._count.isCorrect
+          score: item._count.isCorrect ?? 0,
         };
       })
     );
