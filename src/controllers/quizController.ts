@@ -172,3 +172,48 @@ export const getStreakHistory = async (req: AuthRequest, res: Response) => {
   }
 };
 
+
+export const getLeaderboard = async (req: AuthRequest, res: Response) => {
+  try {
+    const sevenDaysAgo = getTodayDateOnly()
+    sevenDaysAgo.setUTCDate(sevenDaysAgo.getUTCDate() - 7);
+
+    const weeklyStandings = await prisma.dailyAttempt.groupBy({
+     by: ['userId'],
+     where: {
+      isCorrect: true,
+      date: {
+        gte: sevenDaysAgo
+      }
+     } ,
+     _count: {
+      isCorrect: true
+     },
+     orderBy: {
+       _count: {
+         isCorrect: "desc"
+       }
+     },
+     take: 10
+    })
+
+    const leaderboard = await Promise.all(
+      weeklyStandings.map(async (item, index) => {
+        const user = await prisma.user.findUnique({
+          where: { id: item.userId },
+          select: { email: true }
+        });
+        return { 
+          rank: index + 1,
+          email: user?.email || "Anonymous User",
+          correctAnswers: item._count.isCorrect
+        };
+      })
+    );
+    return res.json({ leaderboard });
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    res.status(500).json({ error: "Something went wrong fetching leaderboard" });
+  }
+}
+
