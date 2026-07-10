@@ -8,6 +8,8 @@ datasource db {
 }
 
 model User {
+  freezesAvailable  Int       @default(1)
+  lastFreezeReset   DateTime?
   id           String         @id @default(uuid())
   email        String         @unique
   passwordHash String
